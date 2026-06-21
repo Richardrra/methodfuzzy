@@ -8,7 +8,6 @@ import pandas as pd
 # ==================================================
 st.set_page_config(
     page_title="Penilaian Mahasiswa Fuzzy",
-    page_icon="🎓",
     layout="wide"
 )
 st.markdown("""
@@ -116,7 +115,7 @@ st.markdown("""
 # ==================================================
 # HEADER
 # ==================================================
-st.title("🎓 Sistem Penilaian Mahasiswa Menggunakan Logika Fuzzy")
+st.title(" Sistem Penilaian Mahasiswa Menggunakan Logika Fuzzy")
 
 st.markdown("""
 Aplikasi ini digunakan untuk menentukan kategori nilai mahasiswa
@@ -185,7 +184,7 @@ mu_tinggi = tinggi(nilai)
 # ==================================================
 # TAMPILKAN RUMUS
 # ==================================================
-st.header("📘 Fungsi Keanggotaan")
+st.header("Fungsi Keanggotaan")
 
 st.subheader("1. Rendah")
 
@@ -224,7 +223,7 @@ st.latex(r'''
 # ==================================================
 # HASIL PERHITUNGAN
 # ==================================================
-st.header("🧮 Perhitungan Derajat Keanggotaan")
+st.header("Perhitungan Derajat Keanggotaan")
 
 col1, col2, col3 = st.columns(3)
 
@@ -268,7 +267,7 @@ st.bar_chart(
 # ==================================================
 # GRAFIK HIMPUNAN FUZZY
 # ==================================================
-st.header("📈 Grafik Himpunan Fuzzy")
+st.header("Grafik Himpunan Fuzzy")
 
 x = np.linspace(0, 100, 1000)
 
@@ -351,7 +350,7 @@ else:
 # ==================================================
 # IMPLEMENTASI HASIL
 # ==================================================
-st.header("🎯 Implementasi Hasil")
+st.header(" Implementasi Hasil")
 
 if hasil == "RENDAH":
     st.error("""
@@ -386,7 +385,7 @@ Rekomendasi:
 # ==================================================
 # KESIMPULAN
 # ==================================================
-st.header("📋 Kesimpulan")
+st.header(" Kesimpulan")
 
 st.info(f"""
 Nilai ujian mahasiswa adalah **{nilai}**
