@@ -1,27 +1,55 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
-# ==========================
+# ==================================================
 # KONFIGURASI HALAMAN
-# ==========================
+# ==================================================
 st.set_page_config(
-    page_title="Logika Fuzzy - Penilaian Mahasiswa",
+    page_title="Penilaian Mahasiswa Fuzzy",
+    page_icon="🎓",
     layout="wide"
 )
 
-st.title("🎓 Studi Kasus 1 - Penilaian Mahasiswa (Logika Fuzzy)")
-st.write("Input nilai ujian mahasiswa dan lihat hasil himpunan fuzzy.")
+# ==================================================
+# HEADER
+# ==================================================
+st.title("🎓 Sistem Penilaian Mahasiswa Menggunakan Logika Fuzzy")
 
-# ==========================
+st.markdown("""
+Aplikasi ini digunakan untuk menentukan kategori nilai mahasiswa
+menggunakan metode **Logika Fuzzy**.
+
+### Kategori Penilaian
+- Rendah
+- Sedang
+- Tinggi
+
+### Domain Nilai
+0 - 100
+""")
+
+# ==================================================
+# SIDEBAR
+# ==================================================
+st.sidebar.header("Input Data")
+
+nilai = st.sidebar.slider(
+    "Masukkan Nilai Ujian",
+    min_value=0,
+    max_value=100,
+    value=50
+)
+
+# ==================================================
 # FUNGSI KEANGGOTAAN
-# ==========================
-
+# ==================================================
 def rendah(x):
     if x <= 40:
         return 1
     elif 40 < x < 60:
-        return (60 - x) / (60 - 40)
+        return (60 - x) / 20
     else:
         return 0
 
@@ -30,9 +58,9 @@ def sedang(x):
     if x <= 40 or x >= 70:
         return 0
     elif 40 < x <= 55:
-        return (x - 40) / (55 - 40)
+        return (x - 40) / 15
     elif 55 < x < 70:
-        return (70 - x) / (70 - 55)
+        return (70 - x) / 15
     else:
         return 0
 
@@ -41,35 +69,61 @@ def tinggi(x):
     if x <= 60:
         return 0
     elif 60 < x < 80:
-        return (x - 60) / (80 - 60)
+        return (x - 60) / 20
     else:
         return 1
 
 
-# ==========================
-# INPUT USER
-# ==========================
-
-nilai = st.slider(
-    "Masukkan Nilai Ujian",
-    min_value=0,
-    max_value=100,
-    value=50
-)
-
-# ==========================
-# HITUNG FUZZY
-# ==========================
-
+# ==================================================
+# PERHITUNGAN FUZZY
+# ==================================================
 mu_rendah = rendah(nilai)
 mu_sedang = sedang(nilai)
 mu_tinggi = tinggi(nilai)
 
-# ==========================
-# HASIL
-# ==========================
+# ==================================================
+# TAMPILKAN RUMUS
+# ==================================================
+st.header("📘 Fungsi Keanggotaan")
 
-st.subheader("Hasil Derajat Keanggotaan")
+st.subheader("1. Rendah")
+
+st.latex(r'''
+\mu_{rendah}(x)=
+\begin{cases}
+1,&x\le40\\
+\frac{60-x}{20},&40<x<60\\
+0,&x\ge60
+\end{cases}
+''')
+
+st.subheader("2. Sedang")
+
+st.latex(r'''
+\mu_{sedang}(x)=
+\begin{cases}
+0,&x\le40\\
+\frac{x-40}{15},&40<x\le55\\
+\frac{70-x}{15},&55<x<70\\
+0,&x\ge70
+\end{cases}
+''')
+
+st.subheader("3. Tinggi")
+
+st.latex(r'''
+\mu_{tinggi}(x)=
+\begin{cases}
+0,&x\le60\\
+\frac{x-60}{20},&60<x<80\\
+1,&x\ge80
+\end{cases}
+''')
+
+# ==================================================
+# HASIL PERHITUNGAN
+# ==================================================
+st.header("🧮 Perhitungan Derajat Keanggotaan")
 
 col1, col2, col3 = st.columns(3)
 
@@ -82,64 +136,175 @@ with col2:
 with col3:
     st.metric("Tinggi", f"{mu_tinggi:.2f}")
 
-# ==========================
-# INTERPRETASI
-# ==========================
+# ==================================================
+# TABEL HASIL
+# ==================================================
+df = pd.DataFrame({
+    "Kategori": ["Rendah", "Sedang", "Tinggi"],
+    "Derajat Keanggotaan": [
+        mu_rendah,
+        mu_sedang,
+        mu_tinggi
+    ]
+})
 
-nilai_tertinggi = max(mu_rendah, mu_sedang, mu_tinggi)
+st.subheader("Tabel Derajat Keanggotaan")
 
-if nilai_tertinggi == mu_rendah:
-    hasil = "RENDAH"
-elif nilai_tertinggi == mu_sedang:
-    hasil = "SEDANG"
-else:
-    hasil = "TINGGI"
+st.dataframe(
+    df,
+    use_container_width=True
+)
 
-st.success(f"Kategori Penilaian Mahasiswa: **{hasil}**")
+# ==================================================
+# GRAFIK BAR
+# ==================================================
+st.subheader("Grafik Derajat Keanggotaan")
 
-# ==========================
-# VISUALISASI GRAFIK
-# ==========================
+st.bar_chart(
+    df.set_index("Kategori")
+)
 
-x = np.linspace(0, 100, 500)
+# ==================================================
+# GRAFIK HIMPUNAN FUZZY
+# ==================================================
+st.header("📈 Grafik Himpunan Fuzzy")
+
+x = np.linspace(0, 100, 1000)
 
 y_rendah = [rendah(i) for i in x]
 y_sedang = [sedang(i) for i in x]
 y_tinggi = [tinggi(i) for i in x]
 
-fig, ax = plt.subplots(figsize=(10, 5))
+fig, ax = plt.subplots(figsize=(10,5))
 
-ax.plot(x, y_rendah, label='Rendah')
-ax.plot(x, y_sedang, label='Sedang')
-ax.plot(x, y_tinggi, label='Tinggi')
-
-# garis nilai input user
-ax.axvline(
-    nilai,
-    linestyle='--',
-    label=f'Nilai Input = {nilai}'
+ax.plot(
+    x,
+    y_rendah,
+    linewidth=3,
+    label="Rendah"
 )
 
-ax.set_title("Grafik Himpunan Fuzzy Penilaian Mahasiswa")
+ax.plot(
+    x,
+    y_sedang,
+    linewidth=3,
+    label="Sedang"
+)
+
+ax.plot(
+    x,
+    y_tinggi,
+    linewidth=3,
+    label="Tinggi"
+)
+
+ax.axvline(
+    nilai,
+    linestyle="--",
+    linewidth=2,
+    label=f"Nilai = {nilai}"
+)
+
+ax.scatter(
+    nilai,
+    mu_rendah,
+    s=100
+)
+
+ax.scatter(
+    nilai,
+    mu_sedang,
+    s=100
+)
+
+ax.scatter(
+    nilai,
+    mu_tinggi,
+    s=100
+)
+
 ax.set_xlabel("Nilai Ujian")
 ax.set_ylabel("Derajat Keanggotaan")
-ax.legend()
+ax.set_title("Grafik Himpunan Fuzzy Penilaian Mahasiswa")
 ax.grid(True)
+ax.legend()
 
 st.pyplot(fig)
 
-# ==========================
-# PENJELASAN
-# ==========================
+# ==================================================
+# PENENTUAN HASIL
+# ==================================================
+maksimum = max(
+    mu_rendah,
+    mu_sedang,
+    mu_tinggi
+)
 
-st.subheader("Interpretasi")
+if maksimum == mu_rendah:
+    hasil = "RENDAH"
+elif maksimum == mu_sedang:
+    hasil = "SEDANG"
+else:
+    hasil = "TINGGI"
 
-st.write(f"""
-Nilai ujian mahasiswa adalah **{nilai}**.
+# ==================================================
+# IMPLEMENTASI HASIL
+# ==================================================
+st.header("🎯 Implementasi Hasil")
 
-- Derajat Rendah = **{mu_rendah:.2f}**
-- Derajat Sedang = **{mu_sedang:.2f}**
-- Derajat Tinggi = **{mu_tinggi:.2f}**
+if hasil == "RENDAH":
+    st.error("""
+Mahasiswa memiliki performa akademik rendah.
 
-Berdasarkan nilai keanggotaan terbesar, mahasiswa termasuk kategori **{hasil}**.
+Rekomendasi:
+- Mengikuti remedial
+- Menambah jam belajar
+- Konsultasi dengan dosen
 """)
+
+elif hasil == "SEDANG":
+    st.warning("""
+Mahasiswa memiliki performa cukup baik.
+
+Rekomendasi:
+- Tingkatkan latihan soal
+- Pertahankan konsistensi belajar
+- Tingkatkan pemahaman materi
+""")
+
+else:
+    st.success("""
+Mahasiswa memiliki performa akademik tinggi.
+
+Rekomendasi:
+- Pertahankan prestasi
+- Ikut kompetisi akademik
+- Menjadi mentor belajar
+""")
+
+# ==================================================
+# KESIMPULAN
+# ==================================================
+st.header("📋 Kesimpulan")
+
+st.info(f"""
+Nilai ujian mahasiswa adalah **{nilai}**
+
+Derajat keanggotaan:
+
+- Rendah = {mu_rendah:.2f}
+- Sedang = {mu_sedang:.2f}
+- Tinggi = {mu_tinggi:.2f}
+
+Kategori akhir mahasiswa adalah:
+
+### {hasil}
+""")
+
+# ==================================================
+# FOOTER
+# ==================================================
+st.markdown("---")
+st.caption(
+    "Praktikum Logika Fuzzy - Penilaian Mahasiswa Menggunakan Streamlit"
+)
