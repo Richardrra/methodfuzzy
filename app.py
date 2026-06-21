@@ -11,7 +11,108 @@ st.set_page_config(
     page_icon="🎓",
     layout="wide"
 )
+st.markdown("""
+<style>
 
+/* Background Utama */
+.stApp{
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b,
+        #334155
+    );
+}
+
+/* Judul */
+.main-title{
+    text-align:center;
+    color:white;
+    font-size:48px;
+    font-weight:800;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#cbd5e1;
+    font-size:18px;
+    margin-bottom:40px;
+}
+
+/* Card */
+.custom-card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(10px);
+    padding:25px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.1);
+    margin-bottom:20px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* Metric Card */
+.metric-card{
+    background:linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+    );
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    color:white;
+    box-shadow:0 5px 20px rgba(37,99,235,0.4);
+}
+
+/* Sidebar */
+[data-testid="stSidebar"]{
+    background:#0f172a;
+}
+
+/* Header */
+.hero{
+    background:linear-gradient(
+    135deg,
+    #2563eb,
+    #7c3aed
+    );
+    padding:35px;
+    border-radius:25px;
+    text-align:center;
+    color:white;
+    margin-bottom:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Tabel */
+[data-testid="stDataFrame"]{
+    background:white;
+    border-radius:15px;
+}
+
+/* Tombol */
+.stButton button{
+    background:linear-gradient(
+    135deg,
+    #2563eb,
+    #7c3aed
+    );
+    color:white;
+    border:none;
+    border-radius:12px;
+}
+
+/* Footer */
+.footer{
+    text-align:center;
+    color:#cbd5e1;
+    margin-top:40px;
+    font-size:14px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 # ==================================================
 # HEADER
 # ==================================================
